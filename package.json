@@ -1,0 +1,27 @@
+{
+  "name": "bounce",
+  "version": "1.0.0",
+  "description": "",
+  "main": "game.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "webpack": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/loralee90/Bounce.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/loralee90/Bounce/issues"
+  },
+  "homepage": "https://github.com/loralee90/Bounce#readme",
+  "dependencies": {
+    "webpack": "^3.0.0"
+  }
+}
