@@ -1,55 +1,25 @@
 <!DOCTYPE>
 <html>
   <head>
-
+    <link rel="stylesheet" href="assets/stylesheet/bounce.scss" media="all">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:800|Permanent+Marker|Chewy|Homemade+Apple|Cabin+Sketch|Parisienne|Petit+Formal+Script|Grand+Hotel" rel="stylesheet">
   </head>
   <body>
-    <!-- /*<style>
-     canvas {
-       border: 1px solid black;
-     }
-    </style>*/ -->
-
-    <!-- <script>
-     document.addEventListener("DOMContentLoaded", () => {
-       const canvas = document.querySelector('canvas')
-       const ctx = canvas.getContext('2d')
-       const game = {
-      	 startX: 200,
-      	 startY: 550,
-      	 ctx,
-      	 start: function() {
-      	   this.ctx.fillRect(this.startX, this.startY, 200, 10)
-      	 }
-       }
-       function move() {
-      	game.start()
-      	requestAnimationFrame(move)
-
-       }
-       document.addEventListener("keydown", (e) => {
-      	 game.ctx.fillStyle = randColor()
-      	 switch (e.keyCode) {
-      	   case 37:
-           game.ctx.clearRect(game.startX, game.startY, 200, 10)
-      	     game.startX -= 100
-      	     break
-      	   case 39:
-           game.ctx.clearRect(game.startX, game.startY, 200, 10)
-      	     game.startX += 100
-      	     break
-      	   default:
-      	     console.log('this is not the key you are looking for')
-      	 }
-       })
-       move()
-     })
-     function randColor() {
-       return `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`
-     }
-    </script> -->
-
     <script type="application/javascript" src="bundle.js"></script>
-    <canvas></canvas>
+
+    <section id="start">
+      <h1>Bounce</h1>
+
+      <button type="button" id="startButton">Start</button>
+      <p>Press arrows to move</p>
+    </section>
+
+    <canvas id="main" class="hidden"></canvas>
+
+    <section id="end" class="hidden">
+      <h1>Game Over</h1>
+      <p id="score"></p>
+      <button type="button" id="replayButton">Play Again</button>
+    </section>
   </body>
 </html>

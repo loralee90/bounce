@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -68,26 +68,277 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ball__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__paddle__ = __webpack_require__(3);
+
+
+
+class Game {
+  constructor() {
+    this.paddle = new __WEBPACK_IMPORTED_MODULE_1__paddle__["a" /* default */]();
+    this.balls = [new __WEBPACK_IMPORTED_MODULE_0__ball__["a" /* default */]()];
+    this.counter = 260;
+    this.difficulty = 0;
+    this.lives = 3;
+    this.score = 0;
+    this.streak = 0;
+
+    this.addBall = this.addBall.bind(this);
+    this.increaseDifficulty = this.increaseDifficulty.bind(this);
+    this.drawLives = this.drawLives.bind(this);
+    this.drawScore = this.drawScore.bind(this);
+  }
+
+  addBall() {
+    let i = Math.ceil(Math.random() * 2);
+
+    for (let j = 0; j < i; j++) {
+      this.balls.push(new __WEBPACK_IMPORTED_MODULE_0__ball__["a" /* default */]());
+    }
+  }
+
+  checkCollision() {
+    this.balls.forEach(ball => {
+      if (ball.isCollidedWith(this.paddle)) {
+        ball.bounce();
+        this.score++;
+      }
+    });
+  }
+
+  endGame() {
+    if (this.lives === 0) {
+
+    }
+  }
+
+  increaseDifficulty() {
+    if (this.counter > 0) {
+      this.counter--;
+    } else if (this.counter === 0) {
+      if (this.difficulty < 8) this.difficulty++;
+      this.addBall();
+
+      switch (this.difficulty) {
+        case 1:
+        case 2:
+          this.counter = Math.floor(Math.random() * (260 - 250) + 250);
+          break;
+        case 3:
+        case 4:
+          this.counter = Math.floor(Math.random() * (249 - 200) + 200);
+          break;
+        case 5:
+        case 6:
+          this.counter = Math.floor(Math.random() * (249 - 200) + 200);
+          break;
+        case 7:
+        case 8:
+          this.counter = Math.floor(Math.random() * (199 - 180) + 180);
+          break;
+        case 9:
+        case 10:
+          this.counter = 149;
+          break;
+      }
+    }
+  }
+
+  drawLives(ctx) {
+    const lifeRadius = 8;
+
+    ctx.fillStyle = "#36454F";
+    ctx.beginPath();
+
+    switch (this.lives) {
+      case 1:
+        ctx.arc(
+          575, 25, lifeRadius, 0, 2 * Math.PI, true
+        );
+        break;
+      case 2:
+        ctx.arc(
+          575, 25, lifeRadius, 0, 2 * Math.PI, true
+        );
+        ctx.arc(
+          550, 25, lifeRadius, 0, 2 * Math.PI, true
+        );
+        break;
+      case 3:
+        ctx.arc(
+          575, 25, lifeRadius, 0, 2 * Math.PI, true
+        );
+        ctx.arc(
+          550, 25, lifeRadius, 0, 2 * Math.PI, true
+        );
+        ctx.arc(
+          525, 25, lifeRadius, 0, 2 * Math.PI, true
+        );
+        break;
+    }
+
+    ctx.fill();
+  }
+
+  drawScore(ctx) {
+    ctx.font = '50px Parisienne';
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#36454F";
+    ctx.fillText("Bounce", 300, 100);
+    ctx.font = '42px Parisienne';
+    ctx.fillText(this.score, 300, 160);
+  }
+
+  draw(ctx) {
+    ctx.clearRect(0, 0, Game.WIDTH, Game.HEIGHT);
+    ctx.fillStyle = Game.BG_COLOR;
+    ctx.fillRect(0, 0, Game.WIDTH, Game.HEIGHT);
+
+    this.paddle.draw(ctx);
+    this.balls.forEach(ball => ball.draw(ctx));
+    this.drawLives(ctx);
+    this.drawScore(ctx);
+  }
+
+  step() {
+    let droppedBalls = [];
+
+    this.balls.forEach((ball, i) => {
+      ball.move();
+      if (ball.dropped()) droppedBalls.push(i);
+    });
+
+    droppedBalls.forEach(i => {
+      this.balls.splice(i, 1);
+      this.lives--;
+    });
+
+    this.checkCollision();
+    this.increaseDifficulty();
+  }
+}
+
+Game.WIDTH = 600;
+Game.HEIGHT = 600;
+Game.BG_COLOR = "#FFF0FB";
+
+/* harmony default export */ __webpack_exports__["a"] = (Game);
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__game__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__game__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__game_view__ = __webpack_require__(4);
 
 
 
 document.addEventListener("DOMContentLoaded", () => {
-  const canvas = document.querySelector('canvas');
-  canvas.width = __WEBPACK_IMPORTED_MODULE_0__game__["a" /* default */].WIDTH;
-  canvas.height = __WEBPACK_IMPORTED_MODULE_0__game__["a" /* default */].HEIGHT;
+  const startButton = document.getElementById('startButton');
+  startButton.onclick = startGame;
 
-  const ctx = canvas.getContext('2d');
+  function startGame() {
+    const startFrame = document.getElementById('start');
+    const endFrame = document.getElementById('end');
+    const canvas = document.querySelector('canvas');
 
-  const game = new __WEBPACK_IMPORTED_MODULE_0__game__["a" /* default */]();
-  new __WEBPACK_IMPORTED_MODULE_1__game_view__["a" /* default */](game, ctx).start();
+    startFrame.className="hidden";
+    endFrame.className="hidden";
+    canvas.className="";
+
+    canvas.width = __WEBPACK_IMPORTED_MODULE_0__game__["a" /* default */].WIDTH;
+    canvas.height = __WEBPACK_IMPORTED_MODULE_0__game__["a" /* default */].HEIGHT;
+
+    const ctx = canvas.getContext('2d');
+
+    const game = new __WEBPACK_IMPORTED_MODULE_0__game__["a" /* default */]();
+    new __WEBPACK_IMPORTED_MODULE_1__game_view__["a" /* default */](game, ctx, canvas).start();
+  }
+
+  const replayButton = document.getElementById('replayButton');
+  replayButton.onclick = startGame;
 });
 
 
 /***/ }),
-/* 1 */
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const COLORS = ["red", "orange", "brown", "green", "blue", "purple", "black"];
+const Y_VELS = [-10, -9, -8];
+
+class Ball {
+  constructor() {
+    this.color = COLORS[Math.floor(Math.random() * 7)];
+    this.radius = 7;
+    this.x = 0;
+    this.y = 100;
+    this.dx = 1;
+    this.dy = 1;
+    this.gravity = .1;
+
+    this.move = this.move.bind(this);
+  }
+
+  draw(ctx) {
+    ctx.fillStyle = this.color;
+
+    ctx.beginPath();
+    ctx.arc(
+      this.x, this.y, this.radius, 0, 2 * Math.PI, true
+    );
+    ctx.fill();
+  }
+
+  bounce() {
+    this.dy = Y_VELS[Math.floor(Math.random() * 3)];
+    const time = (this.dy * -1) / this.gravity;
+    this.dx = 200 / (2 * time);
+    const note5 = new Audio('assets/sounds/note5.wav');
+    note5.play();
+    // const note2 = new Audio('assets/sounds/note2.wav');
+    // const note3 = new Audio('assets/sounds/note4.wav');
+    // switch (this.dy) {
+    //   case -10:
+    //     note3.play();
+    //     break;
+    //   case -9:
+    //     note2.play();
+    //     break;
+    //   case -8:
+    //     note1.play();
+    //     break;
+    // }
+  }
+
+  isCollidedWith(paddle) {
+    const paddleStart = paddle.x;
+    const paddleEnd = paddle.x + paddle.width;
+    const ballpos = this.y + this.radius;
+
+    return (ballpos >= 550 && ballpos <= 560) && (this.x >= paddleStart && this.x <= paddleEnd);
+  }
+
+  move() {
+    this.x += this.dx;
+    this.dy += this.gravity;
+    this.y += this.dy;
+  }
+
+  dropped() {
+    return this.y > 560 && this.x < 600;
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Ball);
+
+
+/***/ }),
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -129,254 +380,50 @@ Paddle.COLOR = "#36454F";
 
 
 /***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-const COLORS = ["red", "orange", "brown", "green", "blue", "purple", "black"];
-const Y_VELS = [-10, -8, -7];
-
-class Ball {
-  constructor() {
-    this.color = COLORS[Math.floor(Math.random() * 7)];
-    this.radius = 7;
-    this.x = 0;
-    this.y = 100;
-    this.dx = 1;
-    this.dy = 1;
-    this.gravity = .1;
-
-    this.move = this.move.bind(this);
-  }
-
-  draw(ctx) {
-    ctx.fillStyle = this.color;
-
-    ctx.beginPath();
-    ctx.arc(
-      this.x, this.y, this.radius, 0, 2 * Math.PI, true
-    );
-    ctx.fill();
-  }
-
-  bounce() {
-    this.dy = Y_VELS[Math.floor(Math.random() * 3)];
-    // this.dy = Math.random() * -10;
-    // this.dy = Math.random() * (-10 + 7) - 7;
-    const time = (this.dy * -1) / this.gravity;
-    this.dx = 200 / (2 * time);
-  }
-
-  isCollidedWith(paddle) {
-    const paddleStart = paddle.x;
-    const paddleEnd = paddle.x + paddle.width;
-    const ballpos = this.y + this.radius;
-
-    return (ballpos >= 550 && ballpos <= 560) && (this.x >= paddleStart && this.x <= paddleEnd);
-  }
-
-  move() {
-    this.x += this.dx;
-    this.dy += this.gravity;
-    this.y += this.dy;
-  }
-
-  dropped() {
-    return this.y > 560 && this.x < 600;
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Ball);
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ball__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__paddle__ = __webpack_require__(1);
-
-
-
-class Game {
-  constructor() {
-    this.paddle = new __WEBPACK_IMPORTED_MODULE_1__paddle__["a" /* default */]();
-    this.balls = [new __WEBPACK_IMPORTED_MODULE_0__ball__["a" /* default */]()];
-    this.counter = 260;
-    this.difficulty = 0;
-    this.lives = 3;
-
-    this.addBall = this.addBall.bind(this);
-    this.increaseDifficulty = this.increaseDifficulty.bind(this);
-    this.resetCounter = this.resetCounter.bind(this);
-  }
-
-  addBall() {
-    let i = Math.ceil(Math.random() * 2);
-
-    for (let j = 0; j < i; j++) {
-      this.balls.push(new __WEBPACK_IMPORTED_MODULE_0__ball__["a" /* default */]());
-    }
-  }
-
-  checkCollision() {
-    this.balls.forEach(ball => {
-      if (ball.isCollidedWith(this.paddle)) {
-        ball.bounce();
-      }
-    });
-  }
-
-  increaseDifficulty() {
-    if (this.difficulty < 5) {
-      this.difficulty++;
-    }
-  }
-
-  resetCounter() {
-    if (this.counter > 0) {
-      this.counter--;
-    } else if (this.counter === 0) {
-      this.increaseDifficulty();
-      this.addBall();
-
-      // this.counter = Math.floor(Math.random() * (240 - 100) + 100);
-      // console.log(this.counter)
-
-      // switch (this.difficulty) {
-      //   case 1:
-      //     this.counter = 240;
-      //     break;
-      //   case 2:
-      //     this.counter = 230;
-      //     break;
-      //   case 3:
-      //     this.counter = 210;
-      //     break;
-      //   case 4:
-      //     this.counter = 190;
-      //     break;
-      //   case 5:
-      //     this.counter = 180;
-      //     break;
-      //   case 6:
-      //     this.counter = 160;
-      //     break;
-      //   case 7:
-      //     this.counter = 150;
-      //   case 8:
-      //     this.counter = 140;
-      //     break;
-      //   case 9:
-      //     this.counter = 130;
-      //     break;
-      //   case 10:
-      //     this.counter = 120;
-      //     break;
-      // }
-      //
-      // switch (this.difficulty) {
-      //   case 1:
-      //   case 2:
-      //     this.counter = Math.floor(Math.random() * (260 - 250) + 250);
-      //     break;
-      //   case 3:
-      //   case 4:
-      //     this.counter = Math.floor(Math.random() * (200 - 180) + 180);
-      //     break;
-      //   case 5:
-      //   case 6:
-      //     this.counter = Math.floor(Math.random() * (170 - 150) + 150);
-      //     break;
-      //   case 7:
-      //   case 8:
-      //     this.counter = Math.floor(Math.random() * (150 - 141) + 141);
-      //     break;
-      //   case 9:
-      //   case 10:
-      //     this.counter = 140;
-      //     break;
-      // }
-
-      switch (this.difficulty) {
-        case 1:
-          this.counter = 260;
-          break;
-        case 2:
-          this.counter = 220;
-          break;
-        case 3:
-          this.counter = 200;
-          break;
-        case 4:
-          this.counter = 170;
-          break;
-        case 5:
-          this.counter = 150;
-          break;
-      }
-    }
-  }
-
-  draw(ctx) {
-    ctx.clearRect(0, 0, Game.WIDTH, Game.HEIGHT);
-    ctx.fillStyle = Game.BG_COLOR;
-    ctx.fillRect(0, 0, Game.WIDTH, Game.HEIGHT);
-
-    this.paddle.draw(ctx);
-    this.balls.forEach(ball => ball.draw(ctx));
-  }
-
-  step() {
-    let droppedBalls = [];
-
-    this.balls.forEach((ball, i) => {
-      ball.move();
-      if (ball.dropped()) droppedBalls.push(i);
-    });
-
-    droppedBalls.forEach(i => {
-      this.balls.splice(i, 1);
-      this.lives--;
-    });
-
-    this.checkCollision();
-    this.resetCounter();
-    console.log(this.lives);
-  }
-}
-
-Game.WIDTH = 600;
-Game.HEIGHT = 600;
-Game.BG_COLOR = "#FFF0FB";
-
-/* harmony default export */ __webpack_exports__["a"] = (Game);
-
-
-/***/ }),
 /* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__game__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__game__ = __webpack_require__(0);
 
 
 class GameView {
-  constructor(game, ctx) {
+  constructor(game, ctx, canvas) {
     this.game = game;
     this.ctx = ctx;
+    this.canvas = canvas;
+    this.end = this.end.bind(this);
   }
 
   start() {
+    // const theme = new Audio('assets/sounds/theme.wav');
+    // // theme.addEventListener('ended', function() {
+    // //   this.currentTime = 0;
+    // //   this.play();
+    // // }, false);
+    // theme.play();
     requestAnimationFrame(this.animate.bind(this));
   }
 
   animate() {
-    this.game.step();
-    this.game.draw(this.ctx);
+    if (this.game.lives > 0) {
+      this.game.step();
+      this.game.draw(this.ctx);
 
-    requestAnimationFrame(this.animate.bind(this));
+      requestAnimationFrame(this.animate.bind(this));
+    } else {
+      this.end();
+    }
+  }
+
+  end() {
+    this.canvas.className="hidden";
+
+    const endFrame = document.getElementById('end');
+    endFrame.className="";
+
+    const score = document.getElementById('score');
+    score.value = `Score: ${this.game.score}`;
   }
 }
 

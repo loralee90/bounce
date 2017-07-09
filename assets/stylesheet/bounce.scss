@@ -1,0 +1,19 @@
+body {
+  display: flex;
+  justify-content: center;
+}
+
+.hidden {
+  display: none;
+}
+
+#start, #end {
+  height: 600px;
+  width: 600px;
+  background-color: #FFF0FB;
+}
+
+#main {
+  height: 600px;
+  width: 600px;
+}
