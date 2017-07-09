@@ -181,11 +181,11 @@ class Game {
   }
 
   drawScore(ctx) {
-    ctx.font = '50px Parisienne';
+    ctx.font = '50px Grand Hotel';
     ctx.textAlign = "center";
     ctx.fillStyle = "#36454F";
     ctx.fillText("Bounce", 300, 100);
-    ctx.font = '42px Parisienne';
+    ctx.font = '42px Grand Hotel';
     ctx.fillText(this.score, 300, 160);
   }
 
@@ -423,7 +423,7 @@ class GameView {
     endFrame.className="";
 
     const score = document.getElementById('score');
-    score.value = `Score: ${this.game.score}`;
+    score.innerHTML = `Score: ${this.game.score}`;
   }
 }
 

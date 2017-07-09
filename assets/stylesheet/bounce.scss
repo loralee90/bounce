@@ -1,6 +1,28 @@
+h1, button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  text-decoration: inherit;
+  vertical-align: inherit;
+  box-sizing: inherit;
+  background: transparent;
+}
+
+// button {
+//   -webkit-appearance: none;
+//   -moz-appearance: none;
+//   appearance: none;
+// }
+
 body {
   display: flex;
   justify-content: center;
+  font-family: Grand Hotel;
+  font-weight: bold;
 }
 
 .hidden {
@@ -10,6 +32,29 @@ body {
 #start, #end {
   height: 600px;
   width: 600px;
+  background-color: #FFF0FB;
+  text-align: center;
+  color: #36454F;
+}
+
+#start h1, #end h1 {
+  font-size: 80px;
+  margin: 30px;
+}
+
+#start p, #end p {
+  font-size: 36px;
+}
+
+button {
+  font-size: 30px;
+  border: 2px solid #36454F;
+  padding: 5px 25px 5px 25px;
+  background-color: #FFF;
+  cursor: pointer;
+}
+
+button:hover {
   background-color: #FFF0FB;
 }
 
