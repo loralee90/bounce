@@ -70,6 +70,8 @@
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ball__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__paddle__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__bonus_item__ = __webpack_require__(5);
+
 
 
 
@@ -77,16 +79,21 @@ class Game {
   constructor() {
     this.paddle = new __WEBPACK_IMPORTED_MODULE_1__paddle__["a" /* default */]();
     this.balls = [new __WEBPACK_IMPORTED_MODULE_0__ball__["a" /* default */]()];
+    this.bonusItem = new __WEBPACK_IMPORTED_MODULE_2__bonus_item__["a" /* default */]();
     this.counter = 260;
     this.difficulty = 0;
     this.lives = 3;
     this.score = 0;
     this.streak = 0;
+    this.droppedBalls = [];
+    this.droppedBonusItems = [];
 
     this.addBall = this.addBall.bind(this);
     this.increaseDifficulty = this.increaseDifficulty.bind(this);
     this.drawLives = this.drawLives.bind(this);
     this.drawScore = this.drawScore.bind(this);
+    this.move = this.move.bind(this);
+    this.remove = this.remove.bind(this);
   }
 
   addBall() {
@@ -104,12 +111,6 @@ class Game {
         this.score++;
       }
     });
-  }
-
-  endGame() {
-    if (this.lives === 0) {
-
-    }
   }
 
   increaseDifficulty() {
@@ -198,20 +199,30 @@ class Game {
     this.balls.forEach(ball => ball.draw(ctx));
     this.drawLives(ctx);
     this.drawScore(ctx);
+    this.bonusItem.draw(ctx, this.lives);
   }
 
-  step() {
-    let droppedBalls = [];
-
+  move() {
     this.balls.forEach((ball, i) => {
       ball.move();
-      if (ball.dropped()) droppedBalls.push(i);
+      if (ball.dropped()) this.droppedBalls.push(i);
     });
 
-    droppedBalls.forEach(i => {
+    this.bonusItem.move();
+  }
+
+  remove() {
+    this.droppedBalls.forEach(i => {
       this.balls.splice(i, 1);
       this.lives--;
     });
+
+    if (this.bonusItem.dropped()) this.bonusItem = new __WEBPACK_IMPORTED_MODULE_2__bonus_item__["a" /* default */]();
+  }
+
+  step() {
+    this.move();
+    this.remove();
 
     this.checkCollision();
     this.increaseDifficulty();
@@ -268,12 +279,9 @@ document.addEventListener("DOMContentLoaded", () => {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const COLORS = ["red", "orange", "brown", "green", "blue", "purple", "black"];
-const Y_VELS = [-10, -9, -8];
-
 class Ball {
   constructor() {
-    this.color = COLORS[Math.floor(Math.random() * 7)];
+    this.color = Ball.COLORS[Math.floor(Math.random() * 7)];
     this.radius = 7;
     this.x = 0;
     this.y = 100;
@@ -295,7 +303,7 @@ class Ball {
   }
 
   bounce() {
-    this.dy = Y_VELS[Math.floor(Math.random() * 3)];
+    this.dy = Ball.Y_VELS[Math.floor(Math.random() * 3)];
     const time = (this.dy * -1) / this.gravity;
     this.dx = 200 / (2 * time);
     const note5 = new Audio('assets/sounds/note5.wav');
@@ -333,6 +341,9 @@ class Ball {
     return this.y > 560 && this.x < 600;
   }
 }
+
+Ball.COLORS = ["red", "orange", "brown", "green", "blue", "purple", "black"];
+Ball.Y_VELS = [-10, -9, -8];
 
 /* harmony default export */ __webpack_exports__["a"] = (Ball);
 
@@ -428,6 +439,73 @@ class GameView {
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (GameView);
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ball__ = __webpack_require__(2);
+
+
+class BonusItem {
+  constructor() {
+    this.x = this.randomX();
+    this.y = 0;
+    this.radius = 8;
+    this.color = __WEBPACK_IMPORTED_MODULE_0__ball__["a" /* default */].COLORS[Math.floor(Math.random() * 7)];
+    this.value;
+  }
+
+  randomX() {
+    const x = Math.random();
+
+    if (x < .33) {
+      return 100;
+    } else if (x < .66) {
+      return 300;
+    } else {
+      return 500;
+    }
+  }
+
+  randomItem(lives) {
+    if (lives < 3 && Math.random() < .3) {
+      this.value = "+1";
+    } else {
+      this.value = "2x";
+    }
+
+    return this.value;
+  }
+
+  draw(ctx, lives) {
+    ctx.fillStyle = this.color;
+
+    ctx.beginPath();
+    ctx.arc(
+      this.x, this.y, this.radius, 0, 2 * Math.PI, true
+    );
+    ctx.fill();
+
+    ctx.font = '9pt Arial';
+    // ctx.textAlign = "center";
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'center';
+    ctx.fillText(this.randomItem(lives), this.x, this.y+4);
+  }
+
+  move() {
+    this.y++;
+  }
+
+  dropped() {
+    return this.y > 560;
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (BonusItem);
 
 
 /***/ })
