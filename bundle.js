@@ -111,6 +111,17 @@ class Game {
         this.score++;
       }
     });
+
+    if (this.bonusItem.isCollidedWith(this.paddle)) {
+      this.bonusItem.playSound();
+      if (this.bonusItem.value === "2x") {
+        this.bonusItem = new __WEBPACK_IMPORTED_MODULE_2__bonus_item__["a" /* default */]();
+        this.score *= 2;
+      } else {
+        this.bonusItem = new __WEBPACK_IMPORTED_MODULE_2__bonus_item__["a" /* default */]();
+        this.lives++;
+      }
+    }
   }
 
   increaseDifficulty() {
@@ -306,19 +317,21 @@ class Ball {
     this.dy = Ball.Y_VELS[Math.floor(Math.random() * 3)];
     const time = (this.dy * -1) / this.gravity;
     this.dx = 200 / (2 * time);
-    const note5 = new Audio('assets/sounds/note5.wav');
-    note5.play();
-    // const note2 = new Audio('assets/sounds/note2.wav');
-    // const note3 = new Audio('assets/sounds/note4.wav');
+    // const note5 = new Audio('assets/sounds/pop1.wav');
+    // note5.play();
+    const pop1 = new Audio('assets/sounds/pop1.wav');
+    pop1.play();
+    // const pop2 = new Audio('assets/sounds/pop2.wav');
+    // const pop3 = new Audio('assets/sounds/pop3.ogg');
     // switch (this.dy) {
     //   case -10:
-    //     note3.play();
+    //     pop2.play();
     //     break;
     //   case -9:
-    //     note2.play();
+    //     pop1.play();
     //     break;
     //   case -8:
-    //     note1.play();
+    //     pop2.play();
     //     break;
     // }
   }
@@ -408,10 +421,10 @@ class GameView {
 
   start() {
     // const theme = new Audio('assets/sounds/theme.wav');
-    // // theme.addEventListener('ended', function() {
-    // //   this.currentTime = 0;
-    // //   this.play();
-    // // }, false);
+    // theme.addEventListener('ended', function() {
+    //   this.currentTime = 0;
+    //   this.play();
+    // }, false);
     // theme.play();
     requestAnimationFrame(this.animate.bind(this));
   }
@@ -489,11 +502,26 @@ class BonusItem {
     );
     ctx.fill();
 
-    ctx.font = '9pt Arial';
-    // ctx.textAlign = "center";
+    ctx.font = '9pt Helvetica';
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
-    ctx.fillText(this.randomItem(lives), this.x, this.y+4);
+    ctx.fillText(this.randomItem(lives), this.x, this.y + 4);
+  }
+
+  isCollidedWith(paddle) {
+    const paddleStart = paddle.x;
+    const paddleEnd = paddle.x + paddle.width;
+    const pos = this.y + this.radius;
+
+    return (pos >= 550 && pos <= 560) && (this.x >= paddleStart && this.x <= paddleEnd);
+  }
+
+  playSound() {
+    // ctx.font = '9pt Helvetica';
+    // ctx.fillStyle = 'white';
+    // ctx.fillText(this.value, this.x, this.y + 4);
+    const bonus = new Audio('assets/sounds/bonus2.wav');
+    bonus.play();
   }
 
   move() {
