@@ -77,31 +77,23 @@
 
 class Game {
   constructor() {
-    this.paddle = new __WEBPACK_IMPORTED_MODULE_1__paddle__["a" /* default */]();
-    this.balls = [new __WEBPACK_IMPORTED_MODULE_0__ball__["a" /* default */]()];
-    this.bonusItem = new __WEBPACK_IMPORTED_MODULE_2__bonus_item__["a" /* default */]();
     this.counter = 260;
     this.difficulty = 0;
     this.lives = 3;
     this.score = 0;
     this.streak = 0;
+    this.paddle = new __WEBPACK_IMPORTED_MODULE_1__paddle__["a" /* default */]();
+    this.balls = [new __WEBPACK_IMPORTED_MODULE_0__ball__["a" /* default */]()];
+    this.bonusItem = new __WEBPACK_IMPORTED_MODULE_2__bonus_item__["a" /* default */](this.lives);
     this.droppedBalls = [];
-    this.droppedBonusItems = [];
-
-    this.addBall = this.addBall.bind(this);
-    this.increaseDifficulty = this.increaseDifficulty.bind(this);
-    this.drawLives = this.drawLives.bind(this);
-    this.drawScore = this.drawScore.bind(this);
-    this.move = this.move.bind(this);
-    this.remove = this.remove.bind(this);
   }
 
   addBall() {
-    let i = Math.ceil(Math.random() * 2);
-
-    for (let j = 0; j < i; j++) {
+    // let i = Math.ceil(Math.random() * 2);
+    //
+    // for (let j = 0; j < i; j++) {
       this.balls.push(new __WEBPACK_IMPORTED_MODULE_0__ball__["a" /* default */]());
-    }
+    // }
   }
 
   checkCollision() {
@@ -115,46 +107,15 @@ class Game {
     if (this.bonusItem.isCollidedWith(this.paddle)) {
       this.bonusItem.playSound();
       if (this.bonusItem.value === "2x") {
-        this.bonusItem = new __WEBPACK_IMPORTED_MODULE_2__bonus_item__["a" /* default */]();
+        this.bonusItem = new __WEBPACK_IMPORTED_MODULE_2__bonus_item__["a" /* default */](this.lives);
         this.score *= 2;
       } else {
-        this.bonusItem = new __WEBPACK_IMPORTED_MODULE_2__bonus_item__["a" /* default */]();
         this.lives++;
+        this.bonusItem = new __WEBPACK_IMPORTED_MODULE_2__bonus_item__["a" /* default */](this.lives);
       }
     }
   }
 
-  increaseDifficulty() {
-    if (this.counter > 0) {
-      this.counter--;
-    } else if (this.counter === 0) {
-      if (this.difficulty < 8) this.difficulty++;
-      this.addBall();
-
-      switch (this.difficulty) {
-        case 1:
-        case 2:
-          this.counter = Math.floor(Math.random() * (260 - 250) + 250);
-          break;
-        case 3:
-        case 4:
-          this.counter = Math.floor(Math.random() * (249 - 200) + 200);
-          break;
-        case 5:
-        case 6:
-          this.counter = Math.floor(Math.random() * (249 - 200) + 200);
-          break;
-        case 7:
-        case 8:
-          this.counter = Math.floor(Math.random() * (199 - 180) + 180);
-          break;
-        case 9:
-        case 10:
-          this.counter = 149;
-          break;
-      }
-    }
-  }
 
   drawLives(ctx) {
     const lifeRadius = 8;
@@ -210,10 +171,12 @@ class Game {
     this.balls.forEach(ball => ball.draw(ctx));
     this.drawLives(ctx);
     this.drawScore(ctx);
-    this.bonusItem.draw(ctx, this.lives);
+    this.bonusItem.draw(ctx);
   }
 
   move() {
+    this.droppedBalls = [];
+
     this.balls.forEach((ball, i) => {
       ball.move();
       if (ball.dropped()) this.droppedBalls.push(i);
@@ -227,8 +190,7 @@ class Game {
       this.balls.splice(i, 1);
       this.lives--;
     });
-
-    if (this.bonusItem.dropped()) this.bonusItem = new __WEBPACK_IMPORTED_MODULE_2__bonus_item__["a" /* default */]();
+    if (this.bonusItem.dropped()) this.bonusItem = new __WEBPACK_IMPORTED_MODULE_2__bonus_item__["a" /* default */](this.lives);
   }
 
   step() {
@@ -236,7 +198,6 @@ class Game {
     this.remove();
 
     this.checkCollision();
-    this.increaseDifficulty();
   }
 }
 
@@ -317,23 +278,9 @@ class Ball {
     this.dy = Ball.Y_VELS[Math.floor(Math.random() * 3)];
     const time = (this.dy * -1) / this.gravity;
     this.dx = 200 / (2 * time);
-    // const note5 = new Audio('assets/sounds/pop1.wav');
-    // note5.play();
+    
     const pop1 = new Audio('assets/sounds/pop1.wav');
     pop1.play();
-    // const pop2 = new Audio('assets/sounds/pop2.wav');
-    // const pop3 = new Audio('assets/sounds/pop3.ogg');
-    // switch (this.dy) {
-    //   case -10:
-    //     pop2.play();
-    //     break;
-    //   case -9:
-    //     pop1.play();
-    //     break;
-    //   case -8:
-    //     pop2.play();
-    //     break;
-    // }
   }
 
   isCollidedWith(paddle) {
@@ -356,7 +303,7 @@ class Ball {
 }
 
 Ball.COLORS = ["red", "orange", "brown", "green", "blue", "purple", "black"];
-Ball.Y_VELS = [-10, -9, -8];
+Ball.Y_VELS = [-10, -9, -8, -7];
 
 /* harmony default export */ __webpack_exports__["a"] = (Ball);
 
@@ -420,17 +367,23 @@ class GameView {
   }
 
   start() {
-    // const theme = new Audio('assets/sounds/theme.wav');
-    // theme.addEventListener('ended', function() {
-    //   this.currentTime = 0;
-    //   this.play();
-    // }, false);
-    // theme.play();
+    this.lastTime = 0;
     requestAnimationFrame(this.animate.bind(this));
   }
 
-  animate() {
+  animate(time) {
     if (this.game.lives > 0) {
+      if (time - this.lastTime > 4000) {
+        this.game.difficulty++;
+        this.lastTime = time;
+        this.game.addBall();
+      }
+
+      let rand = Math.random();
+      if (rand <= (this.game.difficulty * .0002)){
+        this.game.addBall();
+      }
+
       this.game.step();
       this.game.draw(this.ctx);
 
@@ -463,12 +416,15 @@ class GameView {
 
 
 class BonusItem {
-  constructor() {
+  constructor(lives) {
     this.x = this.randomX();
     this.y = 0;
     this.radius = 8;
     this.color = __WEBPACK_IMPORTED_MODULE_0__ball__["a" /* default */].COLORS[Math.floor(Math.random() * 7)];
-    this.value;
+    this.lives = lives;
+    this.value = this.randomItem();
+
+    this.randomItem = this.randomItem.bind(this);
   }
 
   randomX() {
@@ -483,17 +439,15 @@ class BonusItem {
     }
   }
 
-  randomItem(lives) {
-    if (lives < 3 && Math.random() < .3) {
-      this.value = "+1";
+  randomItem() {
+    if (this.lives < 3 && Math.random() < .5) {
+      return "+1";
     } else {
-      this.value = "2x";
+      return "2x";
     }
-
-    return this.value;
   }
 
-  draw(ctx, lives) {
+  draw(ctx) {
     ctx.fillStyle = this.color;
 
     ctx.beginPath();
@@ -502,10 +456,10 @@ class BonusItem {
     );
     ctx.fill();
 
-    ctx.font = '9pt Helvetica';
+    ctx.font = '9pt Nunito';
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
-    ctx.fillText(this.randomItem(lives), this.x, this.y + 4);
+    ctx.fillText(this.value, this.x, this.y + 4);
   }
 
   isCollidedWith(paddle) {
@@ -513,7 +467,7 @@ class BonusItem {
     const paddleEnd = paddle.x + paddle.width;
     const pos = this.y + this.radius;
 
-    return (pos >= 550 && pos <= 560) && (this.x >= paddleStart && this.x <= paddleEnd);
+    return (pos >= 550 && pos <= 570) && (this.x >= paddleStart && this.x <= paddleEnd);
   }
 
   playSound() {
