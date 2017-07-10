@@ -1,4 +1,4 @@
-h1, button {
+h1, button, ul, li, p, a {
   margin: 0;
   padding: 0;
   border: 0;
@@ -12,17 +12,24 @@ h1, button {
   background: transparent;
 }
 
+ul {
+  list-style: none;
+}
+
 // button {
 //   -webkit-appearance: none;
 //   -moz-appearance: none;
 //   appearance: none;
 // }
 
-body {
+.container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  margin: 0 auto;
   font-family: Grand Hotel;
   font-weight: bold;
+  width: 600px;
 }
 
 .hidden {
@@ -61,4 +68,22 @@ button:hover {
 #main {
   height: 600px;
   width: 600px;
+}
+
+#footer {
+  display: flex;
+  justify-content: space-between;
+  font-family: Nunito;
+  font-size: 18px;
+  color: #36454F;
+}
+
+.icons {
+  display: flex;
+}
+
+.icons li {
+  margin-left: 3px;
+  margin-right: 3px;
+  font-size: 30px;
 }

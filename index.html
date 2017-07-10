@@ -2,24 +2,36 @@
 <html>
   <head>
     <link rel="stylesheet" href="assets/stylesheet/bounce.scss" media="all">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:800|Permanent+Marker|Chewy|Homemade+Apple|Cabin+Sketch|Parisienne|Petit+Formal+Script|Grand+Hotel" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:900|Permanent+Marker|Chewy|Homemade+Apple|Cabin+Sketch|Parisienne|Petit+Formal+Script|Grand+Hotel" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
   </head>
   <body>
     <script type="application/javascript" src="bundle.js"></script>
+    <div class="container">
+      <section id="start">
+        <h1>Bounce</h1>
 
-    <section id="start">
-      <h1>Bounce</h1>
+        <button type="button" id="startButton">Start</button>
+        <p>Press arrow keys to move</p>
+      </section>
 
-      <button type="button" id="startButton">Start</button>
-      <p>Press arrow keys to move</p>
+      <canvas id="main" class="hidden"></canvas>
+
+      <section id="end" class="hidden">
+        <h1>Game Over</h1>
+        <p id="score"></p>
+        <button type="button" id="replayButton">Play Again</button>
+      </section>
+
+      <section id="footer">
+        <p>&copy; Lora Lee 2017</p>
+        <ul class="icons">
+        <li><a href="http://loralee.life" class="fa fa-home"></a></li>
+        <li><a href="https://github.com/loralee90/bounce" class="fa fa-github"></a></li>
+        <li><a href="https://www.linkedin.com/in/loraalee/" class="fa fa-linkedin-square"></a></li>
+      </ul>
     </section>
 
-    <canvas id="main" class="hidden"></canvas>
-
-    <section id="end" class="hidden">
-      <h1>Game Over</h1>
-      <p id="score"></p>
-      <button type="button" id="replayButton">Play Again</button>
-    </section>
+    </div>
   </body>
 </html>
