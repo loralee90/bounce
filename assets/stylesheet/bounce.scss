@@ -16,12 +16,6 @@ ul {
   list-style: none;
 }
 
-// button {
-//   -webkit-appearance: none;
-//   -moz-appearance: none;
-//   appearance: none;
-// }
-
 .container {
   display: flex;
   flex-direction: column;
@@ -51,6 +45,15 @@ ul {
 
 #start p, #end p {
   font-size: 36px;
+}
+
+#start p:first-of-type {
+  padding-top: 30px;
+  padding-bottom: 25px;
+}
+
+#start p:last-of-type {
+  padding-top: 25px;
 }
 
 button {
