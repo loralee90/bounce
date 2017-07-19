@@ -10,7 +10,7 @@ Bounce is a single-player game in which players juggle balls as they fall with i
 
 ## How to Play
 
-Press the left and right arrow keys to move the paddle and juggle balls. Pick up bonus items along the way to either double your score or add a life. You start off with three lives and lose a life each time you let a ball drop. The goal is to juggle as many balls and score as many points as possible.
+Press the left and right arrow keys to move the paddle and juggle balls. Pick up bonus items along the way to either double your score or add a life. Try to keep the game going for as long as possible and see how high you can score! 
 
 ## Features
 
