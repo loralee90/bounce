@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -68,9 +68,9 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ball__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ball__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__paddle__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__bonus_item__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__bonus_item__ = __webpack_require__(4);
 
 
 
@@ -89,11 +89,7 @@ class Game {
   }
 
   addBall() {
-    // let i = Math.ceil(Math.random() * 2);
-    //
-    // for (let j = 0; j < i; j++) {
-      this.balls.push(new __WEBPACK_IMPORTED_MODULE_0__ball__["a" /* default */]());
-    // }
+    this.balls.push(new __WEBPACK_IMPORTED_MODULE_0__ball__["a" /* default */]());
   }
 
   checkCollision() {
@@ -213,9 +209,71 @@ Game.BG_COLOR = "#FFF0FB";
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+class Ball {
+  constructor() {
+    this.color = Ball.COLORS[Math.floor(Math.random() * 7)];
+    this.radius = 7;
+    this.x = 0;
+    this.y = 100;
+    this.dx = 1;
+    this.dy = 1;
+    this.gravity = .1;
+
+    this.move = this.move.bind(this);
+  }
+
+  draw(ctx) {
+    ctx.fillStyle = this.color;
+
+    ctx.beginPath();
+    ctx.arc(
+      this.x, this.y, this.radius, 0, 2 * Math.PI, true
+    );
+    ctx.fill();
+  }
+
+  bounce() {
+    this.dy = Ball.Y_VELS[Math.floor(Math.random() * 3)];
+    const time = (this.dy * -1) / this.gravity;
+    this.dx = 200 / (2 * time);
+
+    const pop1 = new Audio('assets/sounds/pop1.wav');
+    pop1.play();
+  }
+
+  isCollidedWith(paddle) {
+    const paddleStart = paddle.x;
+    const paddleEnd = paddle.x + paddle.width;
+    const ballPos = this.y + this.radius;
+
+    return (ballPos >= 550 && ballPos <= 560) && (this.x >= paddleStart && this.x <= paddleEnd);
+  }
+
+  move() {
+    this.x += this.dx;
+    this.dy += this.gravity;
+    this.y += this.dy;
+  }
+
+  dropped() {
+    return this.y > 560 && this.x < 600;
+  }
+}
+
+Ball.COLORS = ["red", "orange", "brown", "green", "blue", "purple", "black"];
+Ball.Y_VELS = [-10, -9, -8, -7];
+
+/* harmony default export */ __webpack_exports__["a"] = (Ball);
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__game__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__game_view__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__game_view__ = __webpack_require__(5);
 
 
 
@@ -244,68 +302,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const replayButton = document.getElementById('replayButton');
   replayButton.onclick = startGame;
 });
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-class Ball {
-  constructor() {
-    this.color = Ball.COLORS[Math.floor(Math.random() * 7)];
-    this.radius = 7;
-    this.x = 0;
-    this.y = 100;
-    this.dx = 1;
-    this.dy = 1;
-    this.gravity = .1;
-
-    this.move = this.move.bind(this);
-  }
-
-  draw(ctx) {
-    ctx.fillStyle = this.color;
-
-    ctx.beginPath();
-    ctx.arc(
-      this.x, this.y, this.radius, 0, 2 * Math.PI, true
-    );
-    ctx.fill();
-  }
-
-  bounce() {
-    this.dy = Ball.Y_VELS[Math.floor(Math.random() * 3)];
-    const time = (this.dy * -1) / this.gravity;
-    this.dx = 200 / (2 * time);
-    
-    const pop1 = new Audio('assets/sounds/pop1.wav');
-    pop1.play();
-  }
-
-  isCollidedWith(paddle) {
-    const paddleStart = paddle.x;
-    const paddleEnd = paddle.x + paddle.width;
-    const ballpos = this.y + this.radius;
-
-    return (ballpos >= 550 && ballpos <= 560) && (this.x >= paddleStart && this.x <= paddleEnd);
-  }
-
-  move() {
-    this.x += this.dx;
-    this.dy += this.gravity;
-    this.y += this.dy;
-  }
-
-  dropped() {
-    return this.y > 560 && this.x < 600;
-  }
-}
-
-Ball.COLORS = ["red", "orange", "brown", "green", "blue", "purple", "black"];
-Ball.Y_VELS = [-10, -9, -8, -7];
-
-/* harmony default export */ __webpack_exports__["a"] = (Ball);
 
 
 /***/ }),
@@ -355,64 +351,7 @@ Paddle.COLOR = "#36454F";
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__game__ = __webpack_require__(0);
-
-
-class GameView {
-  constructor(game, ctx, canvas) {
-    this.game = game;
-    this.ctx = ctx;
-    this.canvas = canvas;
-    this.end = this.end.bind(this);
-  }
-
-  start() {
-    this.lastTime = 0;
-    requestAnimationFrame(this.animate.bind(this));
-  }
-
-  animate(time) {
-    if (this.game.lives > 0) {
-      if (time - this.lastTime > 4000) {
-        this.game.difficulty++;
-        this.lastTime = time;
-        this.game.addBall();
-      }
-
-      let rand = Math.random();
-      if (rand <= (this.game.difficulty * .0002)){
-        this.game.addBall();
-      }
-
-      this.game.step();
-      this.game.draw(this.ctx);
-
-      requestAnimationFrame(this.animate.bind(this));
-    } else {
-      this.end();
-    }
-  }
-
-  end() {
-    this.canvas.className="hidden";
-
-    const endFrame = document.getElementById('end');
-    endFrame.className="";
-
-    const score = document.getElementById('score');
-    score.innerHTML = `Score: ${this.game.score}`;
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (GameView);
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ball__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ball__ = __webpack_require__(1);
 
 
 class BonusItem {
@@ -488,6 +427,76 @@ class BonusItem {
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (BonusItem);
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__game__ = __webpack_require__(0);
+
+
+class GameView {
+  constructor(game, ctx, canvas) {
+    this.game = game;
+    this.ctx = ctx;
+    this.canvas = canvas;
+    this.end = this.end.bind(this);
+  }
+
+  start() {
+    this.lastTime = 0;
+    requestAnimationFrame(this.animate.bind(this));
+  }
+
+  animate(time) {
+    if (this.game.lives > 0) {
+      if (time - this.lastTime > 4000) {
+        this.game.difficulty++;
+        this.lastTime = time;
+        this.game.addBall();
+      }
+
+      let rand = Math.random();
+      if (rand <= (this.game.difficulty * .0002)){
+        this.game.addBall();
+      }
+
+      this.game.step();
+      this.game.draw(this.ctx);
+
+      requestAnimationFrame(this.animate.bind(this));
+    } else {
+      this.end();
+    }
+  }
+
+  highScore() {
+    const currentHighScore = localStorage.getItem("highscore");
+
+    if (currentHighScore && this.game.score > currentHighScore || !currentHighScore) {
+      localStorage.setItem("highscore", this.game.score);
+    }
+
+    return localStorage.getItem("highscore");
+  }
+
+  end() {
+    this.canvas.className="hidden";
+
+    const endFrame = document.getElementById('end');
+    endFrame.className="";
+
+    const highScore = document.getElementById('highscore');
+    highScore.innerHTML = `High score: ${this.highScore()}`;
+
+    const score = document.getElementById('score');
+    score.innerHTML = `Score: ${this.game.score}`;
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (GameView);
 
 
 /***/ })

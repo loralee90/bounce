@@ -47,7 +47,11 @@ ul {
   font-size: 36px;
 }
 
-#end p {
+#end p:first-of-type {
+  padding-bottom: 10px;
+}
+
+#end p:last-of-type {
   padding-bottom: 25px;
 }
 
