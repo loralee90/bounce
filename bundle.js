@@ -443,7 +443,6 @@ class GameView {
     this.ctx = ctx;
     this.canvas = canvas;
     this.end = this.end.bind(this);
-    this.highScore = this.highScore.bind(this);
   }
 
   start() {
